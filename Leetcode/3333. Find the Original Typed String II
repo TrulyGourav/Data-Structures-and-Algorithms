@@ -1,0 +1,135 @@
+# 🔁 Find the Original Typed String II (Leetcode 3333)
+
+## 📝 Problem Summary
+
+Alice is typing a string on her computer, but sometimes she presses a key for too long, which causes characters to repeat multiple times.
+
+You are given:
+- A string `word` — the final result seen on the screen (with possible long presses),
+- An integer `k` — the minimum length of the original string she was trying to type.
+
+Your task is to count the number of possible **original strings** that could have resulted in `word` after possibly holding down some keys too long, **where the original string has length at least `k`**.
+
+Return the total number of valid original strings modulo **1,000,000,007**.
+
+---
+
+## 💡 Intuition
+
+The core idea is:
+- Every group of repeated characters in `word` was caused by pressing a single character for too long.
+- So, each such group corresponds to **1 to n** possible original characters (where `n` is the number of repeated characters in the group).
+- We can use this observation to count total possible original strings by multiplying the sizes of these ranges.
+
+However, we are **only interested in original strings of length ≥ k**. So we need to subtract the number of combinations where the reconstructed original string length is less than `k`.
+
+---
+
+## 🧠 Approach
+
+1. **Group repeated characters** in `word`:
+   - For example, `"aabbbc"` → groups of lengths `[2, 3, 1]`
+
+2. **Total combinations without restriction**:
+   - For each group of length `g`, we can have `1` to `g` original characters.
+   - So total combinations = `g1 * g2 * ... * gn` (modulo 10⁹+7)
+
+3. **Count invalid combinations (original string length < k)** using **dynamic programming**:
+   - Let `dp[j]` be the number of ways to build an original string of length `j` using some prefix of the group array.
+   - We initialize `dp[0] = 1` (base case: empty string).
+   - For each group, use **sliding window** to add possible choices (1 to g).
+   - Sum up all `dp[j]` values where `j < k`.
+
+4. **Final answer**:
+   - Subtract invalid combinations from total combinations.
+   - Return the result modulo 1,000,000,007.
+
+---
+
+## 📌 Example
+
+Let’s look at a few examples to clarify:
+
+**Example 1**  
+Input: `word = "aabbccdd"`, `k = 7`  
+Explanation:  
+Grouped as: [2,2,2,2]  
+Each group can contribute 1 or 2 characters (i.e., choices).  
+Total combinations = 2 × 2 × 2 × 2 = 16  
+But we need to exclude those with original length < 7  
+Valid original strings (with length ≥ 7) = 5  
+✅ Output: `5`
+
+**Example 2**  
+Input: `word = "aabbccdd"`, `k = 8`  
+Here, only the full original string (`aabbccdd`) has length 8.  
+✅ Output: `1`
+
+**Example 3**  
+Input: `word = "aaabbb"`, `k = 3`  
+Groups = [3,3]  
+Each group has 3 choices (1 to 3): total = 3 × 3 = 9  
+Only 1 combination has length < 3  
+✅ Output: `8`
+
+---
+
+## 🧪 Time and Space Complexity
+
+- **Time Complexity**: `O(n + k × g)`
+  - `n` = length of word
+  - `g` = number of character groups (≤ n)
+  - `k` = given minimum required length
+- **Space Complexity**: `O(k)` due to the dynamic programming array
+
+---
+
+## ✅ Java Code
+
+```java
+class Solution {
+  public int possibleStringCount(String word, int k) {
+    List<Integer> groups = getConsecutiveLetters(word);
+    final int totalCombinations =
+        (int) groups.stream().mapToLong(Integer::longValue).reduce(1L, (a, b) -> a * b % MOD);
+    if (k <= groups.size())
+      return totalCombinations;
+
+    int[] dp = new int[k];
+    dp[0] = 1; // Base case: one way to form empty string
+
+    for (int i = 0; i < groups.size(); ++i) {
+      int[] newDp = new int[k];
+      int windowSum = 0;
+      int group = groups.get(i);
+      for (int j = i; j < k; ++j) {
+        newDp[j] = (newDp[j] + windowSum) % MOD;
+        windowSum = (windowSum + dp[j]) % MOD;
+        if (j >= group)
+          windowSum = (windowSum - dp[j - group] + MOD) % MOD;
+      }
+      dp = newDp;
+    }
+
+    final int invalidCombinations = Arrays.stream(dp).reduce(0, (a, b) -> (a + b) % MOD);
+    return (totalCombinations - invalidCombinations + MOD) % MOD;
+  }
+
+  private static final int MOD = 1_000_000_007;
+
+  // Returns lengths of consecutive identical characters, e.g. "aabbbc" -> [2, 3, 1]
+  private List<Integer> getConsecutiveLetters(final String word) {
+    List<Integer> groups = new ArrayList<>();
+    int group = 1;
+    for (int i = 1; i < word.length(); ++i) {
+      if (word.charAt(i) == word.charAt(i - 1)) {
+        ++group;
+      } else {
+        groups.add(group);
+        group = 1;
+      }
+    }
+    groups.add(group);
+    return groups;
+  }
+}
