@@ -150,9 +150,29 @@ So:
 
 ## 🔗 Related Problems
 
-- [62. Unique Paths (LC)](https://leetcode.com/problems/unique-paths/)
-- [63. Unique Paths II](https://leetcode.com/problems/unique-paths-ii/)
-- [Minimum Falling Path Sum](https://leetcode.com/problems/minimum-falling-path-sum/)
+| Problem Name | Description | Link |
+|--------------|-------------|------|
+| Unique Paths | Count number of ways to reach bottom-right | [62. Unique Paths](https://leetcode.com/problems/unique-paths/) |
+| Unique Paths II | Same as Unique Paths but with obstacles | [63. Unique Paths II](https://leetcode.com/problems/unique-paths-ii/) |
+| Triangle | Minimum path sum in a triangle (bottom-up DP) | [120. Triangle](https://leetcode.com/problems/triangle/) |
+| Minimum Falling Path Sum | Allows downward diagonal movement | [931. Minimum Falling Path Sum](https://leetcode.com/problems/minimum-falling-path-sum/) |
+| Minimum Path Sum | Min cost path from top-left to bottom-right | [64. Minimum Path Sum](https://leetcode.com/problems/minimum-path-sum/) |
+| Dungeon Game | Min health needed to save princess | [174. Dungeon Game](https://leetcode.com/problems/dungeon-game/) |
+| Out of Boundary Paths | Count paths that exit the grid | [576. Out of Boundary Paths](https://leetcode.com/problems/out-of-boundary-paths/) |
+| Number of Paths with Max Score | Combine score + path counting | [1301. Number of Paths with Maximum Score](https://leetcode.com/problems/number-of-paths-with-maximum-score/) |
+| Number of Ways to Arrive at Destination | Dijkstra variation with path count | [1976. Number of Ways to Arrive at Destination](https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/) |
+| Number of Ways to Stay in the Same Place | DP with constrained moves | [1269. Number of Ways to Stay in the Same Place](https://leetcode.com/problems/number-of-ways-to-stay-in-the-same-place-after-some-steps/) |
+
+---
+
+## 📘 GFG Problems to Practice
+
+| Problem Name | Description | Link |
+|--------------|-------------|------|
+| Minimum Cost Path | Basic variation on cost minimization | [Min Cost Path](https://www.geeksforgeeks.org/min-cost-path-dp-6/) |
+| Max Value Path in Matrix | Max path instead of min | [Maximum Path Sum in Matrix](https://www.geeksforgeeks.org/maximum-path-sum-in-matrix/) |
+| Number of Paths with Exactly K Coins | Use DP to count specific cost paths | [Number of Paths with Exactly K Coins](https://www.geeksforgeeks.org/number-paths-exactly-k-coins/) |
+| Count All Paths Top-Left to Bottom-Right | Pure combinatorics path count | [Count All Paths](https://www.geeksforgeeks.org/count-possible-paths-top-left-bottom-right-nxm-matrix/) |
 
 ---
 
