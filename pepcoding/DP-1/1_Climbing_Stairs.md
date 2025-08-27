@@ -1,115 +1,120 @@
-# DP Notes: Climbing Stairs (Number of Ways)
+# 🪜 Climbing Stairs (DP Notes)
 
-## 1) Refined Problem Statement
-You are on **stair 0** and want to reach **stair n**. At each move, you may climb **1 step** or **2 steps**.  
-**Return the number of distinct ways** to reach stair `n`.
+## 📌 Problem Statement
+You are climbing a staircase. It takes `n` steps to reach the top.  
+Each time you can either climb **1 step** or **2 steps**.  
 
-- You start at step `0`. Reaching step `n` exactly counts as one complete way.
-- It’s allowed to take different sequences of 1s and 2s (order matters).
-- Assume `0 ≤ n ≤ 10^5` (typical interview constraints allow linear DP).
+Return the total number of **distinct ways** you can climb to the top.
 
-**Edge cases**
-- `n = 0` → **1** way (do nothing).
-- `n = 1` → **1** way: `[1]`.
-- `n = 2` → **2** ways: `[1,1]`, `[2]`.
+### Example 1:
+```
+Input: n = 2
+Output: 2
+Explanation: Two ways to climb:
+  1. 1 step + 1 step
+  2. 2 steps
+```
 
-**Examples**
-- `n = 3` → ways: `[1,1,1]`, `[1,2]`, `[2,1]` → **3**
-- `n = 4` → `[1,1,1,1]`, `[1,1,2]`, `[1,2,1]`, `[2,1,1]`, `[2,2]` → **5**
-
-> This is the **Fibonacci-like** recurrence: `ways(n) = ways(n-1) + ways(n-2)` with base `ways(0)=1`, `ways(1)=1`.
+### Example 2:
+```
+Input: n = 3
+Output: 3
+Explanation: Three ways to climb:
+  1. 1 + 1 + 1
+  2. 1 + 2
+  3. 2 + 1
+```
 
 ---
 
-## 2) Intuition & Step-by-Step Human Thinking
+## 💡 Intuition
+This problem is very similar to the **Fibonacci sequence**.
 
-**How do I think about it?**  
-Standing at step `n`, the *last jump* had to be either:
-- from `n-1` using a `+1` step, or
-- from `n-2` using a `+2` step.
+- To reach the `n`th stair, the **last move** could have been:
+  - from `(n-1)`th stair (1 step jump), OR  
+  - from `(n-2)`th stair (2 step jump).  
 
-So **every** valid path to `n` ends with one of those two choices. These two sets of paths are **disjoint** and **cover all** possibilities, so:
-```
-ways(n) = ways(n-1) + ways(n-2)
-```
-Start the recurrence by asking: “What are the trivial counts?”  
-- To reach step `0`: exactly **1** way (do nothing).  
-- To reach step `1`: exactly **1** way (`[1]`).
+👉 So, `ways(n) = ways(n-1) + ways(n-2)`.
 
-From here, everything builds up.
-
-### When to choose Top-Down vs Bottom-Up?
-- **Top-Down (Recursive + Memo)** mirrors the natural recurrence; great for clarity.  
-- **Bottom-Up (Tabulation)** iteratively fills answers and can be easily **space-optimized** to O(1), which is production-friendly.
+We just need to find this recurrence in both recursive (top-down) and iterative (bottom-up) styles.
 
 ---
 
-## 3) Top-Down (Recursive + Memoization)
+## 🧩 Approach 1: Top-Down (Recursive + Memoization)
 
-### Intuition & Approach
-1. Define `f(n)` = number of ways to reach stair `n`.
-2. Base cases: `f(0)=1`, `f(1)=1`.
-3. Recurrence: `f(n)=f(n-1)+f(n-2)`.
-4. Use a memo map/array to avoid recomputing `f(k)` for the same `k`.
-5. Answer is `f(n)`.
+### Step-by-step Thinking:
+1. Start at step `n`.  
+2. Think backwards: "To reach `n`, I must have come from `n-1` or `n-2`".  
+3. This gives a recursive formula: `f(n) = f(n-1) + f(n-2)`.  
+4. Add base cases:  
+   - `f(0) = 1` (1 way to stay at ground).  
+   - `f(1) = 1` (only one way: 1 step).  
+5. Use **memoization** to avoid recomputing the same states.
 
-### Java — Expected Method Only
+---
+
+### ⌨️ Code (Top-Down in Java)
 ```java
-// Top-Down: O(n) time, O(n) space (memo + recursion stack)
-public int climbStairs(int n) {
-    int[] memo = new int[n + 1];
-    Arrays.fill(memo, -1);
-    return dfs(n, memo);
-}
-
-private int dfs(int n, int[] memo) {
-    if (n == 0 || n == 1) return 1;
-    if (memo[n] != -1) return memo[n];
-    memo[n] = dfs(n - 1, memo) + dfs(n - 2, memo);
-    return memo[n];
-}
-```
-
-**Notes**
-- `memo[n]` stores `f(n)` once computed.
-- Recursion depth is `O(n)`; safe for typical `n` in interviews.
-
----
-
-## 4) Bottom-Up (Tabulation)
-
-### Intuition & Approach
-We **build from the base** upward, filling a DP table where `dp[i]` = number of ways to reach stair `i`.
-- Initialize `dp[0]=1`, `dp[1]=1`.
-- For `i` from `2` to `n`: `dp[i]=dp[i-1]+dp[i-2]`.
-
-### How the table fills (example `n=5`)
-Start with:
-```
-i   : 0  1  2  3  4  5
-dp  : 1  1  -  -  -  -
-```
-Fill step by step:
-- `dp[2] = dp[1] + dp[0] = 1 + 1 = 2`
-- `dp[3] = dp[2] + dp[1] = 2 + 1 = 3`
-- `dp[4] = dp[3] + dp[2] = 3 + 2 = 5`
-- `dp[5] = dp[4] + dp[3] = 5 + 3 = 8`
-
-Final table:
-```
-i   : 0  1  2  3  4  5
-dp  : 1  1  2  3  5  8
-```
-Answer: `dp[5] = 8`.
-
-### Java — Expected Method Only (Tabulation)
-```java
-// Bottom-Up: O(n) time, O(n) space
-public int climbStairs(int n) {
-    if (n <= 1) return 1;
+int climbStairs(int n) {
     int[] dp = new int[n + 1];
-    dp[0] = 1;
-    dp[1] = 1;
+    Arrays.fill(dp, -1);
+    return solve(n, dp);
+}
+
+private int solve(int n, int[] dp) {
+    if (n == 0 || n == 1) return 1;  // base cases
+    if (dp[n] != -1) return dp[n];   // already computed
+    return dp[n] = solve(n - 1, dp) + solve(n - 2, dp);
+}
+```
+
+---
+
+### ⏱️ Complexity (Top-Down)
+- **Time:** `O(n)` (each state solved once).  
+- **Space:** `O(n)` (stack space + memo array).  
+
+---
+
+## 🧩 Approach 2: Bottom-Up (Tabulation)
+
+### Step-by-step Thinking:
+Instead of recursion, we fill a **DP table** from the ground up.
+
+1. Create `dp[]` of size `n+1`.  
+2. Base cases:  
+   - `dp[0] = 1`  
+   - `dp[1] = 1`  
+3. For each `i` from `2` to `n`:  
+   - `dp[i] = dp[i-1] + dp[i-2]`.  
+
+This fills the table like Fibonacci.
+
+---
+
+### 🏗️ How the Table Fills (Example: n=5)
+```
+dp[0] = 1
+dp[1] = 1
+
+Now fill:
+dp[2] = dp[1] + dp[0] = 1 + 1 = 2
+dp[3] = dp[2] + dp[1] = 2 + 1 = 3
+dp[4] = dp[3] + dp[2] = 3 + 2 = 5
+dp[5] = dp[4] + dp[3] = 5 + 3 = 8
+
+Final Answer = dp[5] = 8
+```
+
+---
+
+### ⌨️ Code (Bottom-Up in Java)
+```java
+int climbStairs(int n) {
+    if (n == 0 || n == 1) return 1;
+    int[] dp = new int[n + 1];
+    dp[0] = dp[1] = 1;
+
     for (int i = 2; i <= n; i++) {
         dp[i] = dp[i - 1] + dp[i - 2];
     }
@@ -117,70 +122,31 @@ public int climbStairs(int n) {
 }
 ```
 
-### Space-Optimized Tabulation (Optional best practice)
-We only need the previous two values:
-```java
-// Bottom-Up Space-Optimized: O(n) time, O(1) space
-public int climbStairs(int n) {
-    if (n <= 1) return 1;
-    int prev2 = 1; // f(0)
-    int prev1 = 1; // f(1)
-    for (int i = 2; i <= n; i++) {
-        int cur = prev1 + prev2;
-        prev2 = prev1;
-        prev1 = cur;
-    }
-    return prev1; // f(n)
-}
-```
+---
+
+### ⏱️ Complexity (Bottom-Up)
+- **Time:** `O(n)` (loop from 2..n).  
+- **Space:** `O(n)` (array of size n).  
+- Can be **optimized to O(1)** space by keeping only last two values.
 
 ---
 
-## 5) Time & Space Complexity
-
-| Approach | Time | Space |
-|---|---|---|
-| Top-Down (Memo) | `O(n)` | `O(n)` for memo + recursion stack |
-| Bottom-Up (Tabulation) | `O(n)` | `O(n)` |
-| Bottom-Up (Space-Optimized) | `O(n)` | `O(1)` |
+## 🔗 Related Problems
+- **Fibonacci Number** (exact same logic).  
+- Min Cost Climbing Stairs (variation with weights).  
+- Ways to Decode (similar recurrence with constraints).  
+- Unique Paths (grid version).  
 
 ---
 
-## 6) Relevant Problems (Same Pattern / Intuition)
-- **Fibonacci Number** (classic identical recurrence / bases).  
-- **Min Cost Climbing Stairs** (same state movement + cost aggregation).  
-- **Ways to Decode (LeetCode 91)** (branching by 1- or 2-digit choices).  
-- **House Robber** (choose current vs previous best → depends on `i-1`, `i-2`).  
-- **Tiling a 2×n board with 2×1 dominoes** (tiling recurrence).  
-- **Frog Jump (basic variant with 1 or 2 jumps)**.  
-- **Count ways to reach n with steps in {1,2,k}** (straight generalization).
+## 🎯 Strategy to Remember
+Imagine you’re **climbing stairs with two legs**:
+- One leg always goes **1 step**.  
+- Other leg can sometimes **jump 2 steps**.  
+To reach the top, you must decide which leg’s move got you there.  
+This **two-leg thinking = f(n-1) + f(n-2)**.  
 
----
-
-## 7) Strategy to Remember (Sticky Analogy)
-**“Two Doors to the Penthouse”** 🏢  
-Imagine each floor `i` has exactly **two doors** that can lead **into** it:  
-- Door A from floor `i-1` (1-step),  
-- Door B from floor `i-2` (2-step).  
-To count all visitor routes to floor `i`, **add** the number of routes that reached `i-1` and `i-2`. Repeat floor by floor from the lobby (0) upward.  
-That’s why the count **adds** like Fibonacci. If you can picture doors feeding into each floor, your brain will auto-remember: `dp[i] = dp[i-1] + dp[i-2]` with `dp[0]=1`, `dp[1]=1`.
-
----
-
-## 8) Quick Recap
-- Model states as “ways to reach this step.”
-- Base truths: `ways(0)=1`, `ways(1)=1`.
-- Transition: from `i-1` or `i-2` → **add** the counts.
-- Tabulate left-to-right or memoize top-down.  
-- Space-optimize using two rolling variables.
-
----
-
-## 9) Common Pitfalls
-- Returning `0` for `n=0` (should be `1` – doing nothing is one valid way).  
-- Off-by-one errors when allocating arrays (`n+1` size).  
-- Mixing **min/max** DP with **counting** DP (remember: this problem is pure counting, not optimization).
-
----
-
-*Happy climbing!* 🧗‍♂️
+Or fun analogy:  
+Think of Netflix binge-watching.  
+- You can watch **1 episode** at a time or **skip ahead by 2**.  
+- The number of ways to finish a season of `n` episodes = Climbing Stairs DP 😆.
