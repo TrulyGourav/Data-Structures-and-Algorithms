@@ -8,11 +8,13 @@ Focus: **patterns, formulas, observations, and reusable tricks.**
 
 # 1. Binary Basics
 
-**Bit Positions** - LSB → bit 0 - MSB → highest bit
+**Bit Positions** : LSB → bit 0 - MSB → highest bit
 
 **Power Representation** n = Σ (bit_i \* 2\^i)
 
-**Left Shift (<<) — Multiplication Effect** - n << k  =  n * 2^k
+**Left Shift (<<) — Multiplication Effect**:  n << k  =  n * 2^k
+
+**Right Shift (>>) — Division Effect**:  n >> k = n / 2^k
 
 Example\
 13 = 1101 = 8 + 4 + 1
