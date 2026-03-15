@@ -12,6 +12,8 @@ Focus: **patterns, formulas, observations, and reusable tricks.**
 
 **Power Representation** n = Σ (bit_i \* 2\^i)
 
+**Left Shift (<<) — Multiplication Effect** - n << k  =  n * 2^k
+
 Example\
 13 = 1101 = 8 + 4 + 1
 
