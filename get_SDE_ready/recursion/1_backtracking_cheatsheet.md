@@ -1,5 +1,5 @@
 # Backtracking Cheat Sheet (FAANG Level)
-In recursion, cur list/array needs to cloned and then saved, as java stores references.
+In recursion, cur list/array needs to cloned and then saved.
 
 ## 1. Universal Template
 
